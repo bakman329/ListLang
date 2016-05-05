@@ -10,7 +10,7 @@ void Options::help_message() {
 void Options::shell() {
     List list;
 
-    std::cout << "List language interactive prompt\nPress control-C to exit\n";
+    std::cout << "List Language Interactive Prompt\nPress Control-C to Exit\n";
     while (true) {
         std::string input;
         std::cout << ">> ";
