@@ -11,23 +11,21 @@ private:
     typedef struct Node Node;
     Node *root, *head;
 
+    int length();
+    Node *get(int index);
+    Node *push(double x);
+    void too_small_error();
+    Node *pop();
     double *pop_two();
+    void clear();
+    Node *clone_head();
+    void head_pop_print();
+    void print();
 
 public:
     List();
 
-    int length();
-    Node *get(int index);
-    Node *push(double x);
-    Node *pop();
-    void clear();
-    Node *clone_head();
-
-    void head_pop_print();
-
     void parse(std::string str);
-
-    void print();
 };
 
 #endif //LANGUAGE_LIST_H
