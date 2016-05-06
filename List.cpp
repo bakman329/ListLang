@@ -185,7 +185,7 @@ void List::parse(std::string str) {
                 }
                 double param0 = list[0];
                 double param1 = list[1];
-                push(param0 == param1);
+                push(param1 == param0);
                 break;
             }
             case '>': {
@@ -196,7 +196,7 @@ void List::parse(std::string str) {
                 }
                 double param0 = list[0];
                 double param1 = list[1];
-                push(param0 > param1);
+                push(param1 > param0);
                 break;
             }
             case '<': {
@@ -207,7 +207,7 @@ void List::parse(std::string str) {
                 }
                 double param0 = list[0];
                 double param1 = list[1];
-                push(param0 < param1);
+                push(param1 < param0);
                 break;
             }
             case '.':
