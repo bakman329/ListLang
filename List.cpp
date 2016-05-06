@@ -43,7 +43,7 @@ Node *List::push(double x) {
     return head;
 }
 
-void too_small_error() {
+void List::too_small_error() {
     std::cout << "Error: Stack too small\n";
 }
 
