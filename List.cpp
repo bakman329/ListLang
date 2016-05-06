@@ -75,7 +75,10 @@ double *List::pop_two() {
 }
 
 void List::clear() {
-    while (pop() != nullptr) {};
+    double len = length();
+    for (int i = 0; i < len; i++) {
+        pop();
+    }
 }
 
 Node *List::clone_head() {
