@@ -55,10 +55,14 @@ private:
     // Pops the head of the list, and prints its value as an ascii character
     void head_pop_print_ascii();
 
+    // Pushes a given character as either a double or an ASCII character
     void push_char(char ch);
 
     // Takes input from the user, and pushes the first character of it
-    void push_input();
+    void push_input_char();
+
+    // Takes input from the user, and pushes it
+    void push_input_string();
 
     // Prints every node of the list
     void print();
