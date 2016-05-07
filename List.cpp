@@ -210,6 +210,18 @@ void List::parse(std::string str) {
                 push(param1 < param0);
                 break;
             }
+            case ':': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0);
+                push(param1);
+                break;
+            }
             case '.':
                 head_pop_print();
                 should_print = false;
