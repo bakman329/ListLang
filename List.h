@@ -34,8 +34,7 @@ private:
     Node *push(double x);
 
     // Outputs a message, alerting that the attempted action is impossible, as the list is too small
-    // TODO: Make static
-    void too_small_error();
+    static void too_small_error();
 
     // Pops the head of the list, assigns the new head, and returns a pointer to it
     Node *pop();
