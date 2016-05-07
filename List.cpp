@@ -12,6 +12,7 @@ List::List() {
     head = root;
     head->next = nullptr;
     loops = std::vector<std::string>();
+    loops.push_back("");
 }
 
 int List::length() {
@@ -133,7 +134,6 @@ void List::parse(std::string str, bool quiet) {
     bool should_print = true;
     bool loop_mode = false;
     loops.clear();
-    loops.push_back("");
     for (char token : str) {
         // TODO: Implement nested loops
         if (token == '[') {
