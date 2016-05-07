@@ -109,6 +109,20 @@ void List::head_pop_print_ascii() {
     pop();
 }
 
+void List::push_input() {
+    std::string str;
+    std::cout << ">>> ";
+    std::cin >> str;
+
+    char token = str[0];
+    if (isdigit(token)) {
+        push(token - '0');
+    }
+    else if (isalpha(token)) {
+        push((double) token);
+    }
+}
+
 void List::print() {
     Node *temp = root;
     int count = 0;
@@ -284,6 +298,10 @@ void List::parse(std::string str, bool quiet) {
             case '_':
                 clone_head();
                 break;
+            case '~': {
+                push_input();
+            }
+
             default:
                 break;
         }
@@ -293,5 +311,3 @@ void List::parse(std::string str, bool quiet) {
         print();
     }
 }
-
-

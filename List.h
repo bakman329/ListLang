@@ -55,6 +55,9 @@ private:
     // Pops the head of the list, and prints its value as an ascii character
     void head_pop_print_ascii();
 
+    // Takes input from the user, and pushes the first character of it
+    void push_input();
+
     // Prints every node of the list
     void print();
 
