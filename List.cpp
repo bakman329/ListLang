@@ -11,6 +11,8 @@ List::List() {
     root->index = 0;
     head = root;
     head->next = nullptr;
+    loops = std::vector<std::string>();
+    loops.push_back("");
 }
 
 int List::length() {
@@ -98,6 +100,15 @@ void List::head_pop_print() {
     pop();
 }
 
+void List::head_pop_print_ascii() {
+    if (head == nullptr){
+        too_small_error();
+        return;
+    }
+    std::cout << (char) head->value << '\n';
+    pop();
+}
+
 void List::print() {
     Node *temp = root;
     int count = 0;
@@ -113,14 +124,44 @@ void List::print() {
     std::cout << "}\n";
 }
 
-void List::parse(std::string str) {
+void List::loop(std::string str) {
+    while (head->value != 0) {
+        parse(str, true);
+    }
+}
+
+void List::parse(std::string str, bool quiet) {
     bool should_print = true;
+    bool loop_mode = false;
+    loops.clear();
     for (char token : str) {
+        // TODO: Implement nested loops
+        if (token == '[') {
+            loop_mode = true;
+            continue;
+        }
+        if (token == ']') {
+            loop_mode = false;
+            loop(loops[0]);
+            loops[0] = "";
+            continue;
+        }
+        if (loop_mode) {
+            loops[0] += token;
+            continue;
+        }
+
         if (isdigit(token)) {
             push(token - '0');
             continue;
         }
 
+        if (isalpha(token)) {
+            push((double) token);
+            continue;
+        }
+
+        // TODO: Refactor and optimize
         switch (token) {
             case '+': {
                 double *list = pop_two();
@@ -210,8 +251,24 @@ void List::parse(std::string str) {
                 push(param1 < param0);
                 break;
             }
+            case ':': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0);
+                push(param1);
+                break;
+            }
             case '.':
                 head_pop_print();
+                should_print = false;
+                break;
+            case '\"':
+                head_pop_print_ascii();
                 should_print = false;
                 break;
             case ',':
@@ -232,7 +289,7 @@ void List::parse(std::string str) {
         }
     }
 
-    if (should_print) {
+    if (should_print && !quiet) {
         print();
     }
 }

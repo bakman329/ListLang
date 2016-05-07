@@ -1,7 +1,7 @@
 #include "Options.h"
 
 void Options::help_message() {
-    std::cout << "Usage: ./<executable> -[h|i|] [file]" << '\n'
+    std::cout << "Usage: ./<executable> -[h|i] [file]" << '\n'
               << "-h: Show this help message" << '\n'
               << "-i: Interactive prompt" << '\n'
               << "To read a file, pass the file as a parameter, with no options";
@@ -15,7 +15,7 @@ void Options::shell() {
         std::string input;
         std::cout << ">> ";
         std::cin >> input;
-        list.parse(input);
+        list.parse(input, false);
     }
 }
 
@@ -25,13 +25,14 @@ void Options::read_file(char *filename) {
     std::ifstream file(filename);
 
     if (file.is_open()) {
+        // Read each line of the file into the string 'line', then parse that line
         while (getline(file, line)) {
-            list.parse(line);
+            list.parse(line, true);
         }
         file.close();
     }
     else {
-        std::cout << "Failed to open file \"" << filename << "\"\n";
+        std::cerr << "Failed to open file \"" << filename << "\"\n";
     }
 }
 
