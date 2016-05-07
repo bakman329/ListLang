@@ -25,13 +25,14 @@ void Options::read_file(char *filename) {
     std::ifstream file(filename);
 
     if (file.is_open()) {
+        // Read each line of the file into the string 'line', then parse that line
         while (getline(file, line)) {
             list.parse(line, true);
         }
         file.close();
     }
     else {
-        std::cout << "Failed to open file \"" << filename << "\"\n";
+        std::cerr << "Failed to open file \"" << filename << "\"\n";
     }
 }
 
