@@ -109,18 +109,20 @@ void List::head_pop_print_ascii() {
     pop();
 }
 
+void List::push_char(char ch) {
+    if (isdigit(ch)) {
+        push(ch - '0');
+    }
+    else if (isalpha(ch)) {
+        push((double) ch);
+    }
+}
+
 void List::push_input() {
     std::string str;
     std::cout << ">>> ";
     std::cin >> str;
-
-    char token = str[0];
-    if (isdigit(token)) {
-        push(token - '0');
-    }
-    else if (isalpha(token)) {
-        push((double) token);
-    }
+    push_char(str[0]);
 }
 
 void List::print() {
@@ -165,13 +167,8 @@ void List::parse(std::string str, bool quiet) {
             continue;
         }
 
-        if (isdigit(token)) {
-            push(token - '0');
-            continue;
-        }
-
-        if (isalpha(token)) {
-            push((double) token);
+        if (isalnum(token)) {
+            push_char(token);
             continue;
         }
 
