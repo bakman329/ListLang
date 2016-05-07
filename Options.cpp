@@ -15,7 +15,7 @@ void Options::shell() {
         std::string input;
         std::cout << ">> ";
         std::cin >> input;
-        list.parse(input);
+        list.parse(input, false);
     }
 }
 
@@ -26,7 +26,7 @@ void Options::read_file(char *filename) {
 
     if (file.is_open()) {
         while (getline(file, line)) {
-            list.parse(line);
+            list.parse(line, true);
         }
         file.close();
     }

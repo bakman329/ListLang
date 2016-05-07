@@ -11,6 +11,7 @@ List::List() {
     root->index = 0;
     head = root;
     head->next = nullptr;
+    loops = std::vector<std::string>();
 }
 
 int List::length() {
@@ -113,9 +114,34 @@ void List::print() {
     std::cout << "}\n";
 }
 
-void List::parse(std::string str) {
+void List::loop(std::string str) {
+    while (head->value != 0) {
+        parse(str, true);
+    }
+}
+
+void List::parse(std::string str, bool quiet) {
     bool should_print = true;
+    bool loop_mode = false;
+    loops.clear();
+    loops.push_back("");
     for (char token : str) {
+        // TODO: Implement nested loops
+        if (token == '[') {
+            loop_mode = true;
+            continue;
+        }
+        if (token == ']') {
+            loop_mode = false;
+            loop(loops[0]);
+            loops[0] = "";
+            continue;
+        }
+        if (loop_mode) {
+            loops[0] += token;
+            continue;
+        }
+
         if (isdigit(token)) {
             push(token - '0');
             continue;
@@ -244,7 +270,7 @@ void List::parse(std::string str) {
         }
     }
 
-    if (should_print) {
+    if (should_print && !quiet) {
         print();
     }
 }

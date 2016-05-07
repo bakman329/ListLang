@@ -5,11 +5,13 @@
 #include <cstdlib>
 #include <cmath>
 #include <string>
+#include <vector>
 
 class List {
 private:
     typedef struct Node Node;
     Node *root, *head;
+    std::vector<std::string> loops;
 
     int length();
     Node *get(int index);
@@ -21,11 +23,12 @@ private:
     Node *clone_head();
     void head_pop_print();
     void print();
+    void loop(std::string str);
 
 public:
     List();
 
-    void parse(std::string str);
+    void parse(std::string str, bool quiet);
 };
 
 #endif //LANGUAGE_LIST_H
