@@ -53,6 +53,9 @@ private:
     // Pops the head of the list, and prints its value
     void head_pop_print();
 
+    // Pops the head of the list, and prints its value as an ascii character
+    void head_pop_print_ascii();
+
     // Prints every node of the list
     void print();
 

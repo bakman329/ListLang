@@ -99,6 +99,15 @@ void List::head_pop_print() {
     pop();
 }
 
+void List::head_pop_print_ascii() {
+    if (head == nullptr){
+        too_small_error();
+        return;
+    }
+    std::cout << (char) head->value << '\n';
+    pop();
+}
+
 void List::print() {
     Node *temp = root;
     int count = 0;
@@ -147,6 +156,12 @@ void List::parse(std::string str, bool quiet) {
             continue;
         }
 
+        if (isalpha(token)) {
+            push((double) token);
+            continue;
+        }
+
+        // TODO: Refactor and optimize
         switch (token) {
             case '+': {
                 double *list = pop_two();
@@ -250,6 +265,10 @@ void List::parse(std::string str, bool quiet) {
             }
             case '.':
                 head_pop_print();
+                should_print = false;
+                break;
+            case '\"':
+                head_pop_print_ascii();
                 should_print = false;
                 break;
             case ',':
