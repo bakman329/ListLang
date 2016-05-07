@@ -1,7 +1,7 @@
 #include "Options.h"
 
 void Options::help_message() {
-    std::cout << "Usage: ./<executable> -[h|i|] [file]" << '\n'
+    std::cout << "Usage: ./<executable> -[h|i] [file]" << '\n'
               << "-h: Show this help message" << '\n'
               << "-i: Interactive prompt" << '\n'
               << "To read a file, pass the file as a parameter, with no options";
