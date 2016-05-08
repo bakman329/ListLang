@@ -283,6 +283,28 @@ void List::parse(std::string str, bool quiet) {
                 push(param1);
                 break;
             }
+            case '|': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0 || param1);
+                break;
+            }
+            case '&': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0 && param1);
+                break;
+            }
             case '!': {
                 Node *node = pop();
                 if (node == nullptr) {
