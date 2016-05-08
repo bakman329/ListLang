@@ -1,4 +1,4 @@
 <img src="Images/Logo.png" width="330">
 
-# Language
-A small language implementing postfix notation. Written for my final project in AP Computer Science.
+# ListLang
+[Click Here for the Official Wiki](https://github.com/bakman329/Language/wiki)

@@ -96,7 +96,7 @@ void List::head_pop_print() {
         too_small_error();
         return;
     }
-    std::cout << head->value << '\n';
+    std::cout << head->value;
     pop();
 }
 
@@ -105,8 +105,33 @@ void List::head_pop_print_ascii() {
         too_small_error();
         return;
     }
-    std::cout << (char) head->value << '\n';
+    std::cout << (char) head->value;
     pop();
+}
+
+void List::push_char(char ch) {
+    if (isdigit(ch)) {
+        push(ch - '0');
+    }
+    else if (isalpha(ch)) {
+        push((double) ch);
+    }
+}
+
+void List::push_input_char() {
+    std::string str;
+    std::cout << ">>> ";
+    std::cin >> str;
+    push_char(str[0]);
+}
+
+void List::push_input_string() {
+    std::string str;
+    std::cout << ">>> ";
+    std::cin >> str;
+    for (char ch : str) {
+        push_char(ch);
+    }
 }
 
 void List::print() {
@@ -151,13 +176,8 @@ void List::parse(std::string str, bool quiet) {
             continue;
         }
 
-        if (isdigit(token)) {
-            push(token - '0');
-            continue;
-        }
-
-        if (isalpha(token)) {
-            push((double) token);
+        if (isalnum(token)) {
+            push_char(token);
             continue;
         }
 
@@ -284,6 +304,15 @@ void List::parse(std::string str, bool quiet) {
             case '_':
                 clone_head();
                 break;
+            case '~': {
+                push_input_char();
+                break;
+            }
+            case '`': {
+                push_input_string();
+                break;
+            }
+
             default:
                 break;
         }
@@ -293,5 +322,3 @@ void List::parse(std::string str, bool quiet) {
         print();
     }
 }
-
-
