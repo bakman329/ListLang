@@ -160,7 +160,7 @@ void List::parse(std::string str, bool quiet) {
     bool loop_mode = false;
     loops.clear();
     for (char token : str) {
-        // TODO: Implement nested loops
+        // TODO: Implement nested loops, to allow for if statements in loops
         if (token == '[') {
             loop_mode = true;
             continue;
@@ -281,6 +281,15 @@ void List::parse(std::string str, bool quiet) {
                 double param1 = list[1];
                 push(param0);
                 push(param1);
+                break;
+            }
+            case '!': {
+                Node *node = pop();
+                if (node == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                push((node->value == 0) ? 1 : 0);
                 break;
             }
             case '.':
