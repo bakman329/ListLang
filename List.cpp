@@ -26,6 +26,7 @@ int List::length() {
     return count;
 }
 
+// TODO: Test if this works
 Node *List::get(int index) {
     Node *temp = root;
     for (int i = 0; i < index; i++) {
@@ -160,7 +161,7 @@ void List::parse(std::string str, bool quiet) {
     bool loop_mode = false;
     loops.clear();
     for (char token : str) {
-        // TODO: Implement nested loops
+        // TODO: Implement nested loops, to allow for if statements in loops
         if (token == '[') {
             loop_mode = true;
             continue;
@@ -281,6 +282,37 @@ void List::parse(std::string str, bool quiet) {
                 double param1 = list[1];
                 push(param0);
                 push(param1);
+                break;
+            }
+            case '|': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0 || param1);
+                break;
+            }
+            case '&': {
+                double *list = pop_two();
+                if (list == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                double param0 = list[0];
+                double param1 = list[1];
+                push(param0 && param1);
+                break;
+            }
+            case '!': {
+                Node *node = pop();
+                if (node == nullptr) {
+                    too_small_error();
+                    break;
+                }
+                push((node->value == 0) ? 1 : 0);
                 break;
             }
             case '.':
