@@ -26,6 +26,7 @@ int List::length() {
     return count;
 }
 
+// TODO: Test if this works
 Node *List::get(int index) {
     Node *temp = root;
     for (int i = 0; i < index; i++) {
