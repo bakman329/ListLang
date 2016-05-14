@@ -127,6 +127,7 @@ void List::push_input_char() {
     push_char(str[0]);
 }
 
+// TODO: Fix bug where reading stops prematurely
 void List::push_input_string() {
     std::string str;
     std::cout << ">>> ";
@@ -276,13 +277,13 @@ void List::parse(std::string str, bool quiet) {
             }
             case '$': {
                 unary_function([this](double x) {
-                    if (x < 0) {
+                    if (x < 0 || length() - x < 0) {
                         too_small_error();
                         push(x);
                         return;
                     }
 
-                    Node *node_to_clone = get((int) x + 1);
+                    Node *node_to_clone = get((int) (length() - x));
                     if (node_to_clone == nullptr) {
                         push(x);
                         return;
