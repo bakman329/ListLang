@@ -1,18 +1,20 @@
 #include "List.h"
 
+// TODO: Look into "class not used" warning
 struct Node {
     double value;
     int index;
     Node *next;
+
+    Node() : index(0), next(nullptr) { }
+
+    Node(double v, int i, Node *n) : value(v), index(i), next(n) { }
 };
 
 List::List() {
-    root = new Node;
-    root->index = 0;
+    root = new Node();
     head = root;
-    head->next = nullptr;
     loops = std::vector<std::string>();
-    loops.push_back("");
 }
 
 int List::length() {
@@ -26,23 +28,23 @@ int List::length() {
     return count;
 }
 
-// TODO: Test if this works
 Node *List::get(int index) {
     Node *temp = root;
     for (int i = 0; i < index; i++) {
         temp = temp->next;
+        if (temp == nullptr) {
+            too_small_error();
+            return nullptr;
+        }
     }
 
     return temp;
 }
 
 Node *List::push(double x) {
-    head->next = new Node;
     int old_index = head->index;
+    head->next = new Node(x, old_index + 1, nullptr);
     head = head->next;
-    head->next = nullptr;
-    head->value = x;
-    head->index = old_index + 1;
     return head;
 }
 
@@ -51,16 +53,14 @@ void List::too_small_error() {
 }
 
 Node *List::pop() {
-    if(length() < 1) {
+    if (length() < 1) {
         too_small_error();
         return nullptr;
     }
     Node *prev = get(head->index - 1);
     head = prev;
-    Node *old_head_next = new Node;
-    old_head_next->value = head->next->value;
-    old_head_next->index = head->next->index;
-    free(head->next);
+    Node *old_head_next = new Node(head->next->value, head->next->index, nullptr);
+    delete head->next;
     head->next = nullptr;
     return old_head_next;
 }
@@ -73,6 +73,7 @@ double *List::pop_two() {
         return list;
     }
     else {
+        too_small_error();
         return nullptr;
     }
 }
@@ -93,7 +94,7 @@ Node *List::clone_head() {
 }
 
 void List::head_pop_print() {
-    if (head == nullptr){
+    if (head == nullptr) {
         too_small_error();
         return;
     }
@@ -102,7 +103,7 @@ void List::head_pop_print() {
 }
 
 void List::head_pop_print_ascii() {
-    if (head == nullptr){
+    if (head == nullptr) {
         too_small_error();
         return;
     }
@@ -150,30 +151,67 @@ void List::print() {
     std::cout << "}\n";
 }
 
+bool List::unary_function(std::function<void(double)> func) {
+    Node *node = pop();
+    if (node == nullptr) {
+        return false;
+    }
+    func(node->value);
+
+    return true;
+}
+
+bool List::binary_function(std::function<void(double, double)> func) {
+    double *list = pop_two();
+    if (list == nullptr) {
+        return false;
+    }
+    double param0 = list[0];
+    double param1 = list[1];
+    func(param1, param0);
+
+    return true;
+}
+
+bool List::arithmetic_binary_function(std::function<double(double, double)> func) {
+    double *list = pop_two();
+    if (list == nullptr) {
+        return false;
+    }
+    double param0 = list[0];
+    double param1 = list[1];
+    push(func(param1, param0));
+
+    return true;
+}
+
 void List::loop(std::string str) {
     while (head->value != 0) {
-        parse(str, true);
+        parse(str, false);
     }
 }
 
 void List::parse(std::string str, bool quiet) {
     bool should_print = true;
-    bool loop_mode = false;
-    loops.clear();
     for (char token : str) {
-        // TODO: Implement nested loops, to allow for if statements in loops
         if (token == '[') {
-            loop_mode = true;
+            loops.push_back("");
             continue;
         }
         if (token == ']') {
-            loop_mode = false;
-            loop(loops[0]);
-            loops[0] = "";
+            if (loops.empty()) {
+                continue;
+            }
+            std::string contents = loops.back();
+            if (loops.size() != 1) {
+                contents += ']';
+            }
+            loops.pop_back();
+            loop(contents);
             continue;
         }
-        if (loop_mode) {
-            loops[0] += token;
+        if (!loops.empty()) {
+            loops.back() += token;
             continue;
         }
 
@@ -182,137 +220,76 @@ void List::parse(std::string str, bool quiet) {
             continue;
         }
 
-        // TODO: Refactor and optimize
         switch (token) {
             case '+': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 + param1);
+                arithmetic_binary_function([](double x, double y) { return x + y; });
                 break;
             }
             case '-': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 - param0);
+                arithmetic_binary_function([](double x, double y) { return x - y; });
                 break;
             }
             case '*': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 * param1);
+                arithmetic_binary_function([](double x, double y) { return x * y; });
                 break;
             }
             case '/': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 / param0);
+                arithmetic_binary_function([](double x, double y) { return x / y; });
                 break;
             }
             case '^': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(std::pow(param1, param0));
+                arithmetic_binary_function([](double x, double y) { return std::pow(x, y); });
                 break;
             }
             case '=': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 == param0);
+                arithmetic_binary_function([](double x, double y) { return x == y; });
                 break;
             }
             case '>': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 > param0);
+                arithmetic_binary_function([](double x, double y) { return x > y; });
                 break;
             }
             case '<': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 < param0);
+                arithmetic_binary_function([](double x, double y) { return x < y; });
                 break;
             }
             case ':': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0);
-                push(param1);
+                binary_function([this](double x, double y) {
+                    push(y);
+                    push(x);
+                });
                 break;
             }
             case '|': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 || param1);
+                arithmetic_binary_function([](double x, double y) { return x || y; });
                 break;
             }
             case '&': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 && param1);
+                arithmetic_binary_function([](double x, double y) { return x && y; });
                 break;
             }
             case '!': {
-                Node *node = pop();
-                if (node == nullptr) {
-                    too_small_error();
-                    break;
-                }
-                push((node->value == 0) ? 1 : 0);
+                unary_function([this](double x) {
+                   push((x == 0) ? 1 : 0);
+                });
+                break;
+            }
+            case '$': {
+                unary_function([this](double x) {
+                    if (x < 0) {
+                        too_small_error();
+                        push(x);
+                        return;
+                    }
+
+                    Node *node_to_clone = get((int) x + 1);
+                    if (node_to_clone == nullptr) {
+                        push(x);
+                        return;
+                    }
+
+                    push(node_to_clone->value);
+                });
                 break;
             }
             case '.':

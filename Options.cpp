@@ -56,8 +56,3 @@ void Options::handle_args(int argc, char **argv) {
         handle_options(argv[1]);
     }
 }
-
-
-
-
-

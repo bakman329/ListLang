@@ -11,6 +11,7 @@
 #include <cmath>
 #include <string>
 #include <vector>
+#include <functional>
 
 class List {
 private:
@@ -66,6 +67,24 @@ private:
 
     // Prints every node of the list
     void print();
+
+    // Takes a lambda function that takes one double
+    // Tries to pop the top node of the stack, and executes the function with its value
+    // If the pop fails, return false
+    // Else, return true
+    bool unary_function(std::function<void(double)> func);
+
+    // Takes a lambda function that takes two doubles
+    // Tries to pop the top two nodes of the stack, and executes the function with their values
+    // If the pop fails, return false
+    // Else, return true
+    bool binary_function(std::function<void(double, double)> func);
+
+    // Takes a lambda function that takes two doubles and returns a double
+    // Tries to pop the top two nodes of the stack, and execute the function with their values, pushing the result
+    // If the pop fails, return false
+    // Else, return true
+    bool arithmetic_binary_function(std::function<double(double, double)> func);
 
     // Begins a loop, parsing and running the contents of str until the head of the stack equals 0 when checked
     void loop(std::string str);
