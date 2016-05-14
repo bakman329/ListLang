@@ -6,8 +6,9 @@ struct Node {
     int index;
     Node *next;
 
-    Node() : index(0), next(nullptr) {}
-    Node(double v, int i, Node *n) : value(v), index(i), next(n) {}
+    Node() : index(0), next(nullptr) { }
+
+    Node(double v, int i, Node *n) : value(v), index(i), next(n) { }
 };
 
 List::List() {
@@ -32,6 +33,7 @@ Node *List::get(int index) {
     for (int i = 0; i < index; i++) {
         temp = temp->next;
         if (temp == nullptr) {
+            too_small_error();
             return nullptr;
         }
     }
@@ -51,7 +53,7 @@ void List::too_small_error() {
 }
 
 Node *List::pop() {
-    if(length() < 1) {
+    if (length() < 1) {
         too_small_error();
         return nullptr;
     }
@@ -92,7 +94,7 @@ Node *List::clone_head() {
 }
 
 void List::head_pop_print() {
-    if (head == nullptr){
+    if (head == nullptr) {
         too_small_error();
         return;
     }
@@ -101,7 +103,7 @@ void List::head_pop_print() {
 }
 
 void List::head_pop_print_ascii() {
-    if (head == nullptr){
+    if (head == nullptr) {
         too_small_error();
         return;
     }
@@ -149,6 +151,40 @@ void List::print() {
     std::cout << "}\n";
 }
 
+bool List::unary_function(std::function<void(double)> func) {
+    Node *node = pop();
+    if (node == nullptr) {
+        return false;
+    }
+    func(node->value);
+
+    return true;
+}
+
+bool List::binary_function(std::function<void(double, double)> func) {
+    double *list = pop_two();
+    if (list == nullptr) {
+        return false;
+    }
+    double param0 = list[0];
+    double param1 = list[1];
+    func(param1, param0);
+
+    return true;
+}
+
+bool List::arithmetic_binary_function(std::function<double(double, double)> func) {
+    double *list = pop_two();
+    if (list == nullptr) {
+        return false;
+    }
+    double param0 = list[0];
+    double param1 = list[1];
+    push(func(param1, param0));
+
+    return true;
+}
+
 void List::loop(std::string str) {
     while (head->value != 0) {
         parse(str, false);
@@ -160,7 +196,6 @@ void List::parse(std::string str, bool quiet) {
     for (char token : str) {
         if (token == '[') {
             loops.push_back("");
-            // loop_mode = true;
             continue;
         }
         if (token == ']') {
@@ -175,7 +210,6 @@ void List::parse(std::string str, bool quiet) {
             loop(contents);
             continue;
         }
-        // if (loop_mode) {
         if (!loops.empty()) {
             loops.back() += token;
             continue;
@@ -189,136 +223,74 @@ void List::parse(std::string str, bool quiet) {
         // TODO: Refactor and optimize
         switch (token) {
             case '+': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 + param1);
+                arithmetic_binary_function([](double x, double y) { return x + y; });
                 break;
             }
             case '-': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 - param0);
+                arithmetic_binary_function([](double x, double y) { return x - y; });
                 break;
             }
             case '*': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 * param1);
+                arithmetic_binary_function([](double x, double y) { return x * y; });
                 break;
             }
             case '/': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 / param0);
+                arithmetic_binary_function([](double x, double y) { return x / y; });
                 break;
             }
             case '^': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(std::pow(param1, param0));
+                arithmetic_binary_function([](double x, double y) { return std::pow(x, y); });
                 break;
             }
             case '=': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 == param0);
+                arithmetic_binary_function([](double x, double y) { return x == y; });
                 break;
             }
             case '>': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 > param0);
+                arithmetic_binary_function([](double x, double y) { return x > y; });
                 break;
             }
             case '<': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param1 < param0);
+                arithmetic_binary_function([](double x, double y) { return x < y; });
                 break;
             }
             case ':': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0);
-                push(param1);
+                binary_function([this](double x, double y) {
+                    push(y);
+                    push(x);
+                });
                 break;
             }
             case '|': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 || param1);
+                arithmetic_binary_function([](double x, double y) { return x || y; });
                 break;
             }
             case '&': {
-                double *list = pop_two();
-                if (list == nullptr) {
-                    break;
-                }
-                double param0 = list[0];
-                double param1 = list[1];
-                push(param0 && param1);
+                arithmetic_binary_function([](double x, double y) { return x && y; });
                 break;
             }
             case '!': {
-                Node *node = pop();
-                if (node == nullptr) {
-                    break;
-                }
-                push((node->value == 0) ? 1 : 0);
+                unary_function([this](double x) {
+                   push((x == 0) ? 1 : 0);
+                });
                 break;
             }
             case '$': {
-                Node *node = pop();
-                if (node == nullptr) {
-                    break;
-                }
-                Node *node_to_clone = get((int) node->value + 1);
-                if (node_to_clone == nullptr) {
-                    too_small_error();
-                    push(node->value);
-                    break;
-                }
-                push(node_to_clone->value);
+                unary_function([this](double x) {
+                    if (x < 0) {
+                        too_small_error();
+                        push(x);
+                        return;
+                    }
+
+                    Node *node_to_clone = get((int) x + 1);
+                    if (node_to_clone == nullptr) {
+                        push(x);
+                        return;
+                    }
+
+                    push(node_to_clone->value);
+                });
                 break;
             }
             case '.':
