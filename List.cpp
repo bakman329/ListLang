@@ -187,7 +187,7 @@ bool List::arithmetic_binary_function(std::function<double(double, double)> func
 
 void List::loop(std::string str) {
     while (head->value != 0) {
-        parse(str, false);
+        parse(str, true);
     }
 }
 
