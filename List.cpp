@@ -220,7 +220,6 @@ void List::parse(std::string str, bool quiet) {
             continue;
         }
 
-        // TODO: Refactor and optimize
         switch (token) {
             case '+': {
                 arithmetic_binary_function([](double x, double y) { return x + y; });
